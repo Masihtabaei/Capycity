@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 enum BuildingType { EMPTY, HYDROELECTRIC_POWER_PLANT, WIND_POWER_PLANT, SOLAR_PANEL };
+enum MessageType {INFO, SUCCESSFUL, ERROR};
 
 bool checkIfNumberOfGivenArgumentsMeetsTheRequirements(int numberOfGivenArguments, std::string& responseMessage);
 bool checkIfGivenArgumentsMeetTheRequirements(int numberOfGivenArguments, char* givenArguments[], short& width, short& height, std::string& responseMessage);
@@ -21,7 +22,20 @@ void terminateTheProgram(void);
 constexpr short MINIMUM_NUMBER_OF_REQUIRED_COMMAND_LINE_ARGUMENTS = 2;
 constexpr short MAXIMUM_NUMBER_OF_REQUIRED_COMMAND_LINE_ARGUMENTS = 2;
 
+class UserInterface
+{
+public:
+    virtual std::string prompt(std::string promptMessage) = 0;
+    virtual void displayAMessage(std::string messageToDisplay, MessageType typeOfMessageToDisplay) = 0;
+};
 
+class ConsoleAsUserInterface;
+
+class ConsoleAsUserInterface : UserInterface
+{
+
+
+};
 
 int main(int argc, char* argv[])
 {
