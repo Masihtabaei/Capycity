@@ -33,9 +33,30 @@ class ConsoleAsUserInterface;
 
 class ConsoleAsUserInterface : UserInterface
 {
-
-
+public:
+    std::string prompt(std::string promptMessage) = 0;
+    void displayAMessage(std::string messageToDisplay, MessageType typeOfMessageToDisplay) = 0;
 };
+
+std::string ConsoleAsUserInterface::prompt(std::string promptMessage)
+{
+    std::string userInput = "";
+    std::cout << promptMessage + ": ";
+    std::cin >> userInput;
+    return userInput;
+}
+
+void ConsoleAsUserInterface::displayAMessage(std::string messageToDisplay, MessageType typeOfMessageToDisplay)
+{
+    if (typeOfMessageToDisplay == SUCCESSFUL || typeOfMessageToDisplay == INFO)
+    {
+        std::cout << messageToDisplay << std::endl;
+    }
+    else if (typeOfMessageToDisplay == ERROR)
+    {
+        std::cerr << messageToDisplay << std::endl;
+    }
+}
 
 int main(int argc, char* argv[])
 {
