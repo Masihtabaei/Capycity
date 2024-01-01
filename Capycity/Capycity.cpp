@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 enum BuildingType { EMPTY, HYDROELECTRIC_POWER_PLANT, WIND_POWER_PLANT, SOLAR_PANEL };
-enum MessageType {INFO, SUCCESSFUL, ERROR};
+enum MessageType {INFO, PROMPT, SUCCESSFUL, UNSUCCESSFUL};
 
 bool checkIfNumberOfGivenArgumentsMeetsTheRequirements(int numberOfGivenArguments, std::string& responseMessage);
 bool checkIfGivenArgumentsMeetTheRequirements(int numberOfGivenArguments, char* givenArguments[], short& width, short& height, std::string& responseMessage);
@@ -34,14 +34,14 @@ class ConsoleAsUserInterface;
 class ConsoleAsUserInterface : UserInterface
 {
 public:
-    std::string prompt(std::string promptMessage) = 0;
-    void displayAMessage(std::string messageToDisplay, MessageType typeOfMessageToDisplay) = 0;
+    std::string prompt(std::string promptMessage);
+    void displayAMessage(std::string messageToDisplay, MessageType typeOfMessageToDisplay);
 };
 
 std::string ConsoleAsUserInterface::prompt(std::string promptMessage)
 {
     std::string userInput = "";
-    std::cout << promptMessage + ": ";
+    displayAMessage(promptMessage, PROMPT);
     std::cin >> userInput;
     return userInput;
 }
@@ -52,68 +52,74 @@ void ConsoleAsUserInterface::displayAMessage(std::string messageToDisplay, Messa
     {
         std::cout << messageToDisplay << std::endl;
     }
-    else if (typeOfMessageToDisplay == ERROR)
+    else if (typeOfMessageToDisplay == PROMPT)
+    {
+        std::cout << messageToDisplay + ": ";
+    }
+    else if (typeOfMessageToDisplay == UNSUCCESSFUL)
     {
         std::cerr << messageToDisplay << std::endl;
+
     }
 }
 
 int main(int argc, char* argv[])
 {
+    ConsoleAsUserInterface console;
     int exitReturnCodeOfMain = 0;
     std::string responseMessage = "";
     bool numberOfGivenArgumentsMeetsTheRequirements = checkIfNumberOfGivenArgumentsMeetsTheRequirements(argc, responseMessage);
     if (numberOfGivenArgumentsMeetsTheRequirements == true)
     {
-        std::cout << responseMessage << std::endl;
+        console.displayAMessage(responseMessage, SUCCESSFUL);
         short width = 0;
         short height = 0;
         bool givenArgumentsMeetTheRequirements = checkIfGivenArgumentsMeetTheRequirements(argc, argv, width, height, responseMessage);
         if (givenArgumentsMeetTheRequirements == true)
         {
-            std::cout << responseMessage << std::endl;
+            console.displayAMessage(responseMessage, SUCCESSFUL);
             BuildingType* constructionPlane = new BuildingType[height * width];
             initializeTheConstructionPlane(constructionPlane, width, height, responseMessage);
-            std::cout << responseMessage << std::endl;
+            console.displayAMessage(responseMessage, INFO);
             displayTheConstructionPlane(constructionPlane, width, height);
             bool buildingPlacementResult = placeABuilding(constructionPlane, width, height, SOLAR_PANEL, 2, 2, 2, 2, responseMessage);
             if (buildingPlacementResult == true)
             {
-                std::cout << responseMessage << std::endl;
+                console.displayAMessage(responseMessage, SUCCESSFUL);
             }
             else
             {
-                std::cerr << responseMessage << std::endl;
+                console.displayAMessage(responseMessage, UNSUCCESSFUL);
             }
             buildingPlacementResult = placeABuilding(constructionPlane, width, height, SOLAR_PANEL, 2, 2, 2, 2, responseMessage);
             if (buildingPlacementResult == true)
             {
-                std::cout << responseMessage << std::endl;
+                console.displayAMessage(responseMessage, SUCCESSFUL);
             }
             else
             {
-                std::cerr << responseMessage << std::endl;
+                console.displayAMessage(responseMessage, UNSUCCESSFUL);
             }
             displayTheConstructionPlane(constructionPlane, width, height);
             buildingPlacementResult = placeABuilding(constructionPlane, width, height, WIND_POWER_PLANT, 1, 1, 3, 3, responseMessage);
             if (buildingPlacementResult == true)
             {
-                std::cout << responseMessage << std::endl;
+                console.displayAMessage(responseMessage, SUCCESSFUL);
             }
             else
             {
-                std::cerr << responseMessage << std::endl;
+                console.displayAMessage(responseMessage, UNSUCCESSFUL);
             }
             displayTheConstructionPlane(constructionPlane, width, height);
     
             bool areaIsRemocedSuccessfully = removeASpecificArea(constructionPlane, width, height, 1, 1, 1, 1, responseMessage);
             if (areaIsRemocedSuccessfully == true)
             {
-                std::cout << responseMessage << std::endl;
+                console.displayAMessage(responseMessage, SUCCESSFUL);
             }
             else
             {
-                std::cerr << responseMessage << std::endl;
+                console.displayAMessage(responseMessage, UNSUCCESSFUL);
             }
             displayTheConstructionPlane(constructionPlane, width, height);
 
@@ -128,7 +134,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        std::cerr << responseMessage << std::endl;
+        console.displayAMessage(responseMessage, UNSUCCESSFUL);
         exitReturnCodeOfMain = 1;
     }
 
